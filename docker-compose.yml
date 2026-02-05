@@ -28,13 +28,13 @@ services:
     depends_on:
       - namenode
 
-  pyspark-prj:
-    image: jupyter/pyspark-notebook
-    container_name: notebook
-    ports:
-      - "8888:8888"
-    volumes:
-      - ../big_data_20221/:/home/jovyan/work/
+  # pyspark-prj:
+  #   image: jupyter/pyspark-notebook
+  #   container_name: notebook
+  #   ports:
+  #     - "8888:8888"
+  #   volumes:
+  #     - ../big_data_20221/:/home/jovyan/work/
 
   spark-master:
     image: bde2020/spark-master:3.3.0-hadoop3.3
