@@ -360,9 +360,64 @@ Trong `Sample data/` có hai file cho phần article:
 
 Nếu muốn dashboard về bài báo hiển thị:
 
-1. Tương tự như phần chứng khoán, dùng `jq` để chuyển `Các bài báo trên elasticsearch.json` sang định dạng bulk (dựa vào cấu trúc `_index`, `_source`).
-2. Import bằng `_bulk` vào Elasticsearch.
 3. Đảm bảo index tương ứng (thường là `article`) tồn tại và có dữ liệu.
+
+### Hướng dẫn chi tiết (Copy & Run)
+
+Để sửa lỗi đồ thị **"Độ phổ biến trên phương tiện truyền thông"**, bạn cần import file `Các bài báo trên elasticsearch.json`:
+
+**Bước 1: Tạo file bulk NDJSON**
+
+```bash
+cd "/home/trandung/Downloads/Báo cáo bài tập lớn big data 20221 nhóm 28/Sample data"
+
+jq -c '.hits.hits[] | { index: { _index: "article" } }, ._source' \
+  "Các bài báo trên elasticsearch.json" \
+  > /tmp/bulk_articles.ndjson
+```
+
+**Bước 2: Import vào Elasticsearch**
+
+```bash
+curl -s -H "Content-Type: application/x-ndjson" \
+  -XPOST "http://localhost:9200/_bulk" \
+  --data-binary @/tmp/bulk_articles.ndjson \
+  | jq '{took, errors, items: .items | length}'
+```
+
+**Bước 3: Kiểm tra**
+
+```bash
+curl -s "http://localhost:9200/article/_count" | jq '.'
+```
+
+Sau đó quay lại Dashboard Kibana và Refresh.
+
+---
+
+## Hướng dẫn truy cập MongoDB
+
+Hệ thống có sử dụng MongoDB (container `mongo`) để lưu trữ dữ liệu nếu cần. Do cổng mặc định `27017` bị bận, hệ thống đã được cấu hình sang cổng **27018**.
+
+### Cách 1: Truy cập qua Docker (CLI)
+
+```bash
+docker exec -it mongo mongo
+```
+
+Các lệnh cơ bản:
+```javascript
+show dbs
+use big-data
+db.article.find().pretty()
+```
+
+### Cách 2: Truy cập qua MongoDB Compass / Studio 3T
+
+Kết nối với thông tin sau:
+- **Host**: `localhost`
+- **Port**: `27018`
+- **Database**: `big-data`
 
 ---
 

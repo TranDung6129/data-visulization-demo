@@ -6,7 +6,7 @@ db = None
 
 try:
     mongo_client = pymongo.MongoClient(
-        'mongodb+srv://hai4270:hai4270@cluster-big-data.m420aoy.mongodb.net/?retryWrites=true&w=majority',
+        'mongodb://mongo:27017/big-data',
         serverSelectionTimeoutMS=5000)
     # Test connection
     mongo_client.server_info()

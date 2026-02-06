@@ -28,6 +28,14 @@ services:
     depends_on:
       - namenode
 
+  mongo:
+    image: mongo:4.4
+    container_name: mongo
+    ports:
+      - 27018:27017
+    volumes:
+      - mongodb_data:/data/db
+
   # pyspark-prj:
   #   image: jupyter/pyspark-notebook
   #   container_name: notebook
@@ -118,6 +126,8 @@ services:
     image: myracoon/racoon_pyspark:mongo
     container_name: pyspark_application
     restart: always
+    dns:
+      - 8.8.8.8
     depends_on:
       - namenode
       - datanode
@@ -143,11 +153,12 @@ services:
       - kibana
       - zookeeper
       - kafka
+      - mongo
     volumes:
       - ../big_data_20221/stock_iboard_crawler/:/app
 
   articles_crawler:
-    image: myracoon/racoon_node:latest
+    build: ./articles_crawler
     container_name: articles_crawler
     restart: always
     depends_on:
@@ -159,8 +170,9 @@ services:
       - kibana
       - zookeeper
       - kafka
-    volumes:
-      - ../big_data_20221/articles_crawler/:/app
+      - mongo
+    # volumes:
+    #   - ../big_data_20221/articles_crawler/:/app
 
   articles_server:
     image: myracoon/racoon_node:latest
@@ -177,3 +189,4 @@ volumes:
   hadoop_namenode:
   hadoop_datanode:
   esdata:
+  mongodb_data:

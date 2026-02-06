@@ -34,8 +34,10 @@ def process_ssi_data(spark, data, work):
 
 
 def start_crawl(spark, work):
+    print(f"DEBUG: start_crawl called with data={work.get('data')}", flush=True)
     # Nếu loại dữ liệu được chỉ định trong work là data thì gọi hàm lấy data từ ssi
     if work['data'] == ssi_stock_data_api:
+        print("DEBUG: Calling get_stock_real_times_by_group", flush=True)
         data = get_stock_real_times_by_group(
             work['source']['url'], work['source']['body'])
         if (data):

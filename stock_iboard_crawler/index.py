@@ -3,7 +3,7 @@ from services.crawl import start_crawl
 from dependencies import spark
 import time
 from datetime import datetime, timedelta
-import config.config
+# import config.config
 
 print('Craler stared')
 
@@ -54,7 +54,9 @@ def start_crawler():
 
     while True:
         if is_in_exchange_time() == 1:
+            print(f'DEBUG: Starting crawl loop at {datetime.now()}', flush=True)
             for work in works:
+                print(f'DEBUG: Processing work {work.get("config", "unknown")}', flush=True)
                 crawl(spark_sess, work)
 
             time.sleep(60)
